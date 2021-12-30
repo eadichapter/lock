@@ -8,26 +8,18 @@ import static lock.State.WAITING_FOR_LAST_1;
 public class Lock {
 
 	private static final State DEFAULT_STATE = State.WAITING_FOR_FIRST_1;
-
-	private Transition[] rules;
-	private State state;
-
+	private FSM<String> fsm;
 
 	public Lock() {
-		rules = rules();
-		state = DEFAULT_STATE;
+		fsm = new FSM<String>(rules(), DEFAULT_STATE);
 	}
 
 	public void accept(String key) {
-		Transition<String> t = findTransition(key);
-		if (t != null)
-			state = t.newState;
-		else
-			state = DEFAULT_STATE;
+		fsm.sendEvent(new Event<String>(key));
 	}
 
 	public boolean isLocked() {
-		return !State.UNLOCKED.equals(state);
+		return !State.UNLOCKED.equals(fsm.getState());
 	}
 
 	private Transition[] rules() {
@@ -38,14 +30,6 @@ public class Lock {
 			new Transition<String>(WAITING_FOR_LAST_1, new Event<String>("1"), UNLOCKED),
 		};
 		return transitions;
-	}
-
-	private Transition<String> findTransition(String event) {
-		for (Transition<String> t : rules)
-			if (state.equals(t.initialState) && t.event.value().equals(event))
-				return t;
-
-		return null;
 	}
 
 }
