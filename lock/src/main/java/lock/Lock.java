@@ -5,33 +5,25 @@ import static lock.State.WAITING_FOR_3;
 import static lock.State.WAITING_FOR_FIRST_1;
 import static lock.State.WAITING_FOR_LAST_1;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Lock {
 
-	private List<String> acceptedKeys;
+	private static final State DEFAULT_STATE = State.WAITING_FOR_FIRST_1;
+
 	private Transition[] rules;
 	private State state;
 
 
 	public Lock() {
-		acceptedKeys = new ArrayList<String>();
 		rules = rules();
-		state = State.WAITING_FOR_FIRST_1;
+		state = DEFAULT_STATE;
 	}
 
 	public void accept(String key) {
-		boolean transitionFound = false;
-		for (Transition<String> t : rules) {
-			if (state.equals(t.initialState) && t.event.value().equals(key)) {
-				state = t.newState;
-				transitionFound = true;
-			}
-		}
-		if (!transitionFound) {
-			state = State.WAITING_FOR_FIRST_1;
-		}
+		Transition<String> t = findTransition(key);
+		if (t != null)
+			state = t.newState;
+		else
+			state = DEFAULT_STATE;
 	}
 
 	public boolean isLocked() {
@@ -46,6 +38,14 @@ public class Lock {
 			new Transition<String>(WAITING_FOR_LAST_1, new Event<String>("1"), UNLOCKED),
 		};
 		return transitions;
+	}
+
+	private Transition<String> findTransition(String event) {
+		for (Transition<String> t : rules)
+			if (state.equals(t.initialState) && t.event.value().equals(event))
+				return t;
+
+		return null;
 	}
 
 }
