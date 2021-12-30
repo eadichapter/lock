@@ -1,10 +1,8 @@
-package lock;
+package fsm;
 
 public class FSM<E> {
 
 	private State state;
-
-
 	private Transition[] transitions;
 	private State defaultState;
 

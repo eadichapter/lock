@@ -1,4 +1,4 @@
-package lock;
+package fsm;
 
 public class Transition<E> {
 

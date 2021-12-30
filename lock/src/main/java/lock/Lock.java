@@ -1,13 +1,17 @@
 package lock;
 
-import static lock.State.UNLOCKED;
-import static lock.State.WAITING_FOR_3;
-import static lock.State.WAITING_FOR_FIRST_1;
-import static lock.State.WAITING_FOR_LAST_1;
+import static lock.LockState.UNLOCKED;
+import static lock.LockState.WAITING_FOR_3;
+import static lock.LockState.WAITING_FOR_FIRST_1;
+import static lock.LockState.WAITING_FOR_LAST_1;
+
+import fsm.Event;
+import fsm.FSM;
+import fsm.Transition;
 
 public class Lock {
 
-	private static final State DEFAULT_STATE = State.WAITING_FOR_FIRST_1;
+	private static final LockState DEFAULT_STATE = LockState.WAITING_FOR_FIRST_1;
 	private FSM<String> fsm;
 
 	public Lock() {
@@ -19,7 +23,7 @@ public class Lock {
 	}
 
 	public boolean isLocked() {
-		return !State.UNLOCKED.equals(fsm.getState());
+		return !LockState.UNLOCKED.equals(fsm.getState());
 	}
 
 	private Transition[] rules() {
