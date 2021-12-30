@@ -22,10 +22,15 @@ public class Lock {
 	}
 
 	public void accept(String key) {
+		boolean transitionFound = false;
 		for (Transition<String> t : rules) {
 			if (state.equals(t.initialState) && t.event.value().equals(key)) {
 				state = t.newState;
+				transitionFound = true;
 			}
+		}
+		if (!transitionFound) {
+			state = State.WAITING_FOR_FIRST_1;
 		}
 	}
 

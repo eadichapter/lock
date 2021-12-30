@@ -11,12 +11,20 @@ class LockSpec extends Specification {
 		lock = new Lock()
 	}
 
-	def 'trying wrong combinations'() {
-		when: 'accepting wrong keys'
-		accept(["1", "2", "3", "4"])
+	@Unroll
+	def 'when trying keys: #keys then the lock remains locked'() {
+		when: 'accepting keys: #keys'
+		accept(keys)
 
 		then: 'the lock remains locked'
 		lock.isLocked()
+
+		where:
+		keys << [
+			["1", "2", "3", "4"],
+			["1", "7", "3", "1"],
+			["7", "1", "3", "1", "2"] //if you give the right sequence and then a wrong key then it gets locked again
+		]
 	}
 
 	@Unroll
@@ -28,7 +36,11 @@ class LockSpec extends Specification {
 		!lock.isLocked()
 
 		where:
-		keys << [["1", "3", "1"], ["1", "1", "3", "1"]]
+		keys << [
+			["1", "3", "1"],
+			["1", "1", "3", "1"],
+			["7", "8", "1", "3", "7", "1", "3", "1"],
+		]
 	}
 
 	private def accept(def keys) {
