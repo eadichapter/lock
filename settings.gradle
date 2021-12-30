@@ -8,4 +8,4 @@
  */
 
 rootProject.name = 'lock'
-include('app')
+include('lock')
