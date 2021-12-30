@@ -4,41 +4,31 @@ import lock.Lock
 import spock.lang.Specification
 
 class LockSpec extends Specification {
+
+	Lock lock
 	
-	def "it accepts one number at a time"() {
-		given: 'a new lock'
-		Lock lock = new Lock()
-		
-		expect: 'to accept a key'
-		lock.accept("1")
+	def setup() {
+		lock = new Lock()
 	}
-	
-	def 'trying wrong combinations'() {
-		given: 'a new lock'
-		Lock lock = new Lock()
 		
-		when: 'to accept a key'
-		lock.accept("1")
-		lock.accept("2")
-		lock.accept("3")
-		lock.accept("4")
+	def 'trying wrong combinations'() {
+		when: 'accepting wrong keys'
+		accept(["1", "2", "3", "4"])
 		
 		then: 'the lock remains locked'
 		lock.isLocked() 
 	}
 	
 	def 'trying the right code'() {
-		given: 'a new lock'
-		Lock lock = new Lock()
-		
-		when: 'to accept a key'
-		lock.accept("1")
-		lock.accept("3")
-		lock.accept("1")
+		when: 'to accepting the right keys'
+		accept(["1", "3", "1"])
 		
 		then: 'the lock is unlocked'
 		!lock.isLocked()
 	}
 	
+	private def accept(def keys) {
+		keys.each { lock.accept(it) }
+	}
 	
 }
