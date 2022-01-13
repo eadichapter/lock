@@ -4,20 +4,14 @@ public class FSM<E, C> {
 
 	private State state;
 	private Transition[] transitions;
-	private State defaultState;
 	private C lock;
-	private Transition defaultTransition;
+	private Transition<E, C> defaultTransition;
 
-	public FSM(Transition[] transitions, State defaultState, C lock) {
+	public FSM(Transition[] transitions, C lock, Transition<E, C> defaultTransition) {
 		this.transitions = transitions;
-		this.defaultState = defaultState;
-		this.lock = lock;
-		state = defaultState;
-	}
-
-	public FSM(Transition[] transitions, State defaultState, C lock, Transition defaultTransition) {
-		this(transitions, defaultState, lock);
 		this.defaultTransition = defaultTransition;
+		this.lock = lock;
+		this.state = defaultTransition.newState;
 	}
 
 	public State getState() {
@@ -26,15 +20,16 @@ public class FSM<E, C> {
 
 	public void sendEvent(Event<E> e) {
 		Transition<E, C> t = findTransition(e);
-		if (t != null) {
-			state = t.newState;
+		if (t != null)
+			executeTransition(t);
+		else
+			executeTransition(defaultTransition);
+	}
+
+	private void executeTransition(Transition<E, C> t) {
+		state = t.newState;
+		if (t.action != null)
 			t.action.accept(lock);
-		}
-		else {
-			state = defaultState;
-			if (defaultTransition != null)
-				defaultTransition.action.accept(lock);
-		}
 	}
 
 	private Transition<E, C> findTransition(Event<E> e) {

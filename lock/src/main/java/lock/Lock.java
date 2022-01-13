@@ -16,7 +16,7 @@ public class Lock {
 	private String color;
 
 	public Lock() {
-		fsm = new FSM<String, Lock>(rules(), DEFAULT_STATE, this, defaultTransition());
+		fsm = new FSM<String, Lock>(rules(),this, defaultTransition());
 	}
 
 	private Transition<String, Lock> defaultTransition() {
