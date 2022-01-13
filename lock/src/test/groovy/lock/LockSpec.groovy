@@ -20,7 +20,6 @@ class LockSpec extends Specification {
 		lock.isLocked()
 		lock.lampColor() == "red"
 
-
 		where:
 		keys << [
 			["1", "2", "3", "4"],

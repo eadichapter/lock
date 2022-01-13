@@ -1,16 +1,18 @@
 package fsm;
 
+import java.util.List;
+
 public class FSM<E, C> {
 
 	private State state;
-	private Transition[] transitions;
-	private C lock;
+	private List<Transition<E, C>> transitions;
+	private C actionConsumer;
 	private Transition<E, C> defaultTransition;
 
-	public FSM(Transition[] transitions, C lock, Transition<E, C> defaultTransition) {
+	public FSM(List<Transition<E, C>> transitions, Transition<E, C> defaultTransition, C actionConsumer) {
 		this.transitions = transitions;
 		this.defaultTransition = defaultTransition;
-		this.lock = lock;
+		this.actionConsumer = actionConsumer;
 		this.state = defaultTransition.newState;
 	}
 
@@ -29,18 +31,18 @@ public class FSM<E, C> {
 	private void executeTransition(Transition<E, C> t) {
 		state = t.newState;
 		if (t.action != null)
-			t.action.accept(lock);
+			t.action.accept(actionConsumer);
 	}
 
 	private Transition<E, C> findTransition(Event<E> e) {
 		for (Transition<E, C> t : transitions)
-			if (transitionsMatches(e, t))
+			if (transitionsMatch(e, t))
 				return t;
 
 		return null;
 	}
 
-	private boolean transitionsMatches(Event<E> e, Transition<E, C> t) {
+	private boolean transitionsMatch(Event<E> e, Transition<E, C> t) {
 		return state.equals(t.initialState) && t.event.value().equals(e.value());
 	}
 
