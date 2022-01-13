@@ -18,6 +18,8 @@ class LockSpec extends Specification {
 
 		then: 'the lock remains locked'
 		lock.isLocked()
+		lock.lampColor() == "red"
+
 
 		where:
 		keys << [
@@ -34,6 +36,7 @@ class LockSpec extends Specification {
 
 		then: 'the lock is unlocked'
 		!lock.isLocked()
+		lock.lampColor() == "green"
 
 		where:
 		keys << [
